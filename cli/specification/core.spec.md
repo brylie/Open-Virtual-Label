@@ -49,6 +49,7 @@ Available on all commands:
 | Option | Description |
 |---|---|
 | `--workspace <path>` | Path to workspace directory. Defaults to `./workspace` relative to cwd, then walks up the directory tree. |
+| `--schemas <path>` | Path to the JSON schemas directory. Defaults to `./schemas` relative to cwd, then walks up the directory tree. |
 | `--artist <artist-id>` | Scopes the command to a specific artist when multiple artists exist in the workspace. |
 | `--json` | Output result as JSON instead of formatted text. Useful for scripting. |
 | `--quiet` | Suppress informational output. Errors still print to stderr. |
@@ -78,6 +79,7 @@ Available on all commands:
 | Variable | Description |
 |---|---|
 | `OVL_WORKSPACE` | Override the workspace path. Equivalent to `--workspace <path>` on every command. |
+| `OVL_SCHEMAS_DIR` | Override the schemas directory path. Equivalent to `--schemas <path>` on every command. |
 | `OVL_ARTIST` | Override the default artist. Equivalent to `--artist <id>` on every command. |
 | `OVL_YES` | If set to `1`, skip non-critical confirmation prompts. Critical gates (release submit, archive push) are never bypassed. |
 | `OVL_JSON` | If set to `1`, output all results as JSON. |

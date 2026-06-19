@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/open-virtual-label/ovl/internal/output"
+	"github.com/open-virtual-label/ovl/internal/schema"
 	ws "github.com/open-virtual-label/ovl/internal/workspace"
 	"github.com/spf13/cobra"
 )
@@ -23,6 +24,7 @@ func (e *ExitError) Error() string { return e.Msg }
 // Config holds values from global flags and environment variables.
 type Config struct {
 	WorkspacePath string
+	SchemasPath   string
 	ArtistID      string
 	OutputJSON    bool
 	Quiet         bool
@@ -40,6 +42,9 @@ mastering, QC, archival, outreach, and the release pipeline.`,
 	PersistentPreRunE: func(_ *cobra.Command, _ []string) error {
 		output.SetQuiet(cfg.Quiet)
 		output.SetJSON(cfg.OutputJSON)
+		if cfg.SchemasPath != "" {
+			schema.SetDir(cfg.SchemasPath)
+		}
 		return nil
 	},
 }
@@ -64,6 +69,8 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfg.WorkspacePath, "workspace", "",
 		"path to workspace directory (default: ./workspace, walks up)")
+	rootCmd.PersistentFlags().StringVar(&cfg.SchemasPath, "schemas", "",
+		"path to JSON schemas directory (default: ./schemas, walks up)")
 	rootCmd.PersistentFlags().StringVar(&cfg.ArtistID, "artist", "",
 		"scope to a specific artist ID")
 	rootCmd.PersistentFlags().BoolVar(&cfg.OutputJSON, "json", false,
@@ -78,6 +85,11 @@ func applyEnvDefaults() {
 	if cfg.WorkspacePath == "" {
 		if env := os.Getenv("OVL_WORKSPACE"); env != "" {
 			cfg.WorkspacePath = env
+		}
+	}
+	if cfg.SchemasPath == "" {
+		if env := os.Getenv("OVL_SCHEMAS_DIR"); env != "" {
+			cfg.SchemasPath = env
 		}
 	}
 	if cfg.ArtistID == "" {

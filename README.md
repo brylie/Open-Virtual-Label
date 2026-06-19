@@ -70,6 +70,8 @@ cd cli
 
 Builds `ovl` for `linux/amd64`, `linux/arm64`, `darwin/amd64`, and `darwin/arm64`, writing each binary to `build/` at the repo root (e.g. `build/ovl-linux-amd64`). `build/` is gitignored.
 
+`ovl` reads JSON schemas from a `schemas/` directory at runtime rather than embedding them, discovered the same way as `workspace/`: an explicit `--schemas <path>` flag, the `OVL_SCHEMAS_DIR` environment variable, or by walking up from the current directory looking for a `schemas/` folder. Binaries run from inside this repo find it automatically; if you copy a binary elsewhere, pass `--schemas` or set `OVL_SCHEMAS_DIR` to point at a copy of this repo's `schemas/` directory.
+
 ### Lint
 
 ```bash

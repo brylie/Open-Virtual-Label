@@ -283,6 +283,14 @@
                     ],
                     "format": "uri",
                     "description": "Free Music Archive release URL"
+                },
+                "subvert_fm": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "format": "uri",
+                    "description": "Subvert.fm release URL (co-op music platform)"
                 }
             }
         },

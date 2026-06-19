@@ -160,6 +160,11 @@
                 },
                 "tiktok_handle": {
                     "type": "string"
+                },
+                "subvert_fm_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Artist profile on Subvert.fm co-op music platform"
                 }
             }
         },

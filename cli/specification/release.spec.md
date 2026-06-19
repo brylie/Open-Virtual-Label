@@ -136,7 +136,7 @@ ovl release add-link <release-id> --platform <platform> --url <url>
 **Behaviour:** Sets the specified field in `release.store_links`.
 
 **Valid platforms:** `spotify`, `apple_music`, `youtube_music`, `bandcamp`, `soundcloud`,
-`tidal`, `amazon_music`.
+`tidal`, `amazon_music`, `fma` (Free Music Archive), `subvert_fm` (Subvert.fm co-op platform).
 
 ---
 

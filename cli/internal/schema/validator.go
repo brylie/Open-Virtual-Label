@@ -1,7 +1,6 @@
 package schema
 
 import (
-	"embed"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,32 +11,72 @@ import (
 	"github.com/santhosh-tekuri/jsonschema/v5"
 )
 
-//go:embed data
-var schemaFS embed.FS
+// dir is the resolved schemas/ directory. Empty until SetDir or Find is called.
+var dir string
 
 // compiled caches compiled schemas by name.
 var compiled = map[string]*jsonschema.Schema{}
 
-// schemaFiles maps schema names to their embedded paths.
-var schemaFiles = map[string]string{
-	"label":             "data/label.schema.json",
-	"artist":            "data/artist.schema.json",
-	"release":           "data/release.schema.json",
-	"track":             "data/track.schema.json",
-	"mastering-profile": "data/mastering-profile.schema.json",
-	"opportunity":       "data/opportunity.schema.json",
-	"finance-entry":     "data/finance-entry.schema.json",
+// schemaFileNames maps schema names to their filename within the schemas directory.
+var schemaFileNames = map[string]string{
+	"label":             "label.schema.json",
+	"artist":            "artist.schema.json",
+	"release":           "release.schema.json",
+	"track":             "track.schema.json",
+	"mastering-profile": "mastering-profile.schema.json",
+	"opportunity":       "opportunity.schema.json",
+	"finance-entry":     "finance-entry.schema.json",
+}
+
+// SetDir sets the directory schemas are read from, overriding auto-discovery.
+func SetDir(path string) {
+	dir = path
+	compiled = map[string]*jsonschema.Schema{}
+}
+
+// Find resolves the schemas directory: hint if given, otherwise an upward
+// search from the current directory for a directory named "schemas".
+func Find(hint string) (string, error) {
+	if hint != "" {
+		return filepath.Abs(hint)
+	}
+
+	wd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+
+	for {
+		candidate := filepath.Join(wd, "schemas")
+		if info, err := os.Stat(candidate); err == nil && info.IsDir() {
+			return candidate, nil
+		}
+		parent := filepath.Dir(wd)
+		if parent == wd {
+			break
+		}
+		wd = parent
+	}
+
+	return "", errors.New("schemas directory not found; pass --schemas or set OVL_SCHEMAS_DIR")
 }
 
 func getSchema(name string) (*jsonschema.Schema, error) {
 	if s, ok := compiled[name]; ok {
 		return s, nil
 	}
-	path, ok := schemaFiles[name]
+	filename, ok := schemaFileNames[name]
 	if !ok {
 		return nil, fmt.Errorf("unknown schema: %q", name)
 	}
-	data, err := schemaFS.ReadFile(path)
+	if dir == "" {
+		resolved, err := Find("")
+		if err != nil {
+			return nil, err
+		}
+		dir = resolved
+	}
+	data, err := os.ReadFile(filepath.Join(dir, filename))
 	if err != nil {
 		return nil, fmt.Errorf("reading schema %s: %w", name, err)
 	}

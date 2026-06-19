@@ -144,6 +144,7 @@ ovl artist set-platform <artist-id> --platform <platform> --value <value>
 | `instagram` | `instagram_handle` | Handle without `@` |
 | `facebook` | `facebook_url` | Full URL |
 | `tiktok` | `tiktok_handle` | Handle without `@` |
+| `subvert-fm` | `subvert_fm_url` | Full URL (e.g. `https://www.subvert.fm/artist`) |
 
 **Behaviour:**
 

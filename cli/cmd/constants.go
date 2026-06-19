@@ -37,6 +37,8 @@ const (
 	platformSoundcloud  = "soundcloud"
 	platformTidal       = "tidal"
 	platformAmazonMusic = "amazon_music"
+	platformFMA         = "fma"
+	platformSubvertFM   = "subvert_fm"
 )
 
 // MCP integration identifiers.

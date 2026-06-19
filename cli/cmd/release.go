@@ -465,10 +465,11 @@ func runReleaseAddLink(_ *cobra.Command, args []string) error {
 
 	validPlatforms := map[string]bool{
 		platformSpotify: true, platformAppleMusic: true, platformYouTubeMusic: true,
-		platformBandcamp: true, platformSoundcloud: true, platformTidal: true, platformAmazonMusic: true,
+		platformBandcamp: true, platformSoundcloud: true, platformTidal: true,
+		platformAmazonMusic: true, platformFMA: true, platformSubvertFM: true,
 	}
 	if !validPlatforms[releaseAddLinkPlatform] {
-		return fmt.Errorf("unknown platform %q; valid: spotify, apple_music, youtube_music, bandcamp, soundcloud, tidal, amazon_music", releaseAddLinkPlatform)
+		return fmt.Errorf("unknown platform %q; valid: spotify, apple_music, youtube_music, bandcamp, soundcloud, tidal, amazon_music, fma, subvert_fm", releaseAddLinkPlatform)
 	}
 
 	relFile := ws.ReleaseFile(wsPath, artistID, releaseID)
@@ -496,6 +497,10 @@ func runReleaseAddLink(_ *cobra.Command, args []string) error {
 		rel.StoreLinks.Tidal = &url
 	case platformAmazonMusic:
 		rel.StoreLinks.AmazonMusic = &url
+	case platformFMA:
+		rel.StoreLinks.FMA = &url
+	case platformSubvertFM:
+		rel.StoreLinks.SubvertFM = &url
 	}
 
 	if err := ws.WriteJSON(relFile, rel); err != nil {

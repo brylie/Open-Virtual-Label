@@ -49,4 +49,5 @@ type ArtistPlatforms struct {
 	InstagramHandle      string `json:"instagram_handle,omitempty"`
 	FacebookURL          string `json:"facebook_url,omitempty"`
 	TikTokHandle         string `json:"tiktok_handle,omitempty"`
+	SubvertFMURL         string `json:"subvert_fm_url,omitempty"`
 }

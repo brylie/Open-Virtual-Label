@@ -66,6 +66,8 @@ type StoreLinks struct {
 	Soundcloud   *string `json:"soundcloud"`
 	Tidal        *string `json:"tidal"`
 	AmazonMusic  *string `json:"amazon_music"`
+	FMA          *string `json:"fma"`
+	SubvertFM    *string `json:"subvert_fm"`
 }
 
 type ReleaseQC struct {
