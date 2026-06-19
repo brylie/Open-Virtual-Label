@@ -275,6 +275,14 @@
                         "null"
                     ],
                     "format": "uri"
+                },
+                "fma": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "format": "uri",
+                    "description": "Free Music Archive release URL"
                 }
             }
         },
