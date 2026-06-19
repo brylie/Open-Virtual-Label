@@ -61,6 +61,15 @@ cd cli
 mise exec -- go test ./...
 ```
 
+### Cross-compile release binaries
+
+```bash
+cd cli
+./scripts/build.sh
+```
+
+Builds `ovl` for `linux/amd64`, `linux/arm64`, `darwin/amd64`, and `darwin/arm64`, writing each binary to `build/` at the repo root (e.g. `build/ovl-linux-amd64`). `build/` is gitignored.
+
 ### Lint
 
 ```bash
