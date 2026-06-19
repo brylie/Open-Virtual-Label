@@ -76,7 +76,15 @@ func init() {
 	financeSummaryCmd.Flags().BoolVar(&finSummaryBrief, "brief", false, "one-paragraph summary")
 	_ = financeSummaryCmd.MarkFlagRequired("period")
 
-	financeCmd.AddCommand(financeAddRevenueCmd, financeAddExpenseCmd, financeSummaryCmd)
+	financeQuoteCmd := &cobra.Command{
+		Use:   "quote",
+		Short: "Generate a pricing quote for a commission opportunity (requires finance-manager agent)",
+		RunE:  func(*cobra.Command, []string) error { return agentStub("finance-manager") },
+	}
+	financeQuoteCmd.Flags().String("opportunity", "", "opportunity ID (required)")
+	_ = financeQuoteCmd.MarkFlagRequired("opportunity")
+
+	financeCmd.AddCommand(financeAddRevenueCmd, financeAddExpenseCmd, financeSummaryCmd, financeQuoteCmd)
 	rootCmd.AddCommand(financeCmd)
 }
 
