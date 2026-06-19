@@ -148,6 +148,9 @@ vite.config.ts.timestamp-*
 # Compiled ovl CLI binary
 /cli/ovl
 
+# Cross-compiled ovl release binaries
+/build/
+
 # Ignore everything in the workspace directory except the .gitkeep file
 workspace/*
 !.gitkeep
