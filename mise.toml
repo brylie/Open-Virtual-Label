@@ -1,0 +1,5 @@
+[tools]
+go = "1.26"
+golangci-lint = "latest"
+markdownlint-cli2 = "latest"
+node = "24"

@@ -1,0 +1,289 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://openvirtuallabel.org/schemas/metrics-snapshot/v1",
+    "title": "MetricsSnapshot",
+    "description": "A periodic analytics snapshot for one artist across platforms. One snapshot file per month per artist, stored in workspace/metrics/[YYYY-MM]/[artist-id].json.",
+    "type": "object",
+    "required": [
+        "id",
+        "artist_id",
+        "period",
+        "schema_version"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "schema_version": {
+            "type": "string",
+            "const": "1"
+        },
+        "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$",
+            "maxLength": 64,
+            "description": "Slug. Convention: '[artist-id]-[YYYY-MM]'. e.g. 'brylie-christopher-2025-06'."
+        },
+        "artist_id": {
+            "type": "string"
+        },
+        "period": {
+            "type": "object",
+            "required": [
+                "year",
+                "month"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "year": {
+                    "type": "integer",
+                    "minimum": 2000
+                },
+                "month": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 12
+                }
+            }
+        },
+        "captured_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date this snapshot was compiled."
+        },
+        "platforms": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Per-platform metric blocks. All fields optional — populate only what is available for the period.",
+            "properties": {
+                "spotify": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "monthly_listeners": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "streams": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "saves": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "playlist_reach": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "followers": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        }
+                    }
+                },
+                "youtube": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "subscribers": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "views": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "watch_time_hours": {
+                            "type": [
+                                "number",
+                                "null"
+                            ]
+                        },
+                        "impressions": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        }
+                    }
+                },
+                "bandcamp": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "sales_count": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "revenue_eur": {
+                            "type": [
+                                "number",
+                                "null"
+                            ]
+                        },
+                        "downloads": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "fans": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        }
+                    }
+                },
+                "soundcloud": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "plays": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "followers": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "reposts": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        }
+                    }
+                },
+                "apple_music": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "plays": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "listeners": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "shazams": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        }
+                    }
+                },
+                "instagram": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "followers": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "reach": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "profile_visits": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "top_tracks": {
+            "type": "array",
+            "description": "Top performing tracks this period across all platforms.",
+            "items": {
+                "type": "object",
+                "required": [
+                    "track_id"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "track_id": {
+                        "type": "string"
+                    },
+                    "platform": {
+                        "type": "string"
+                    },
+                    "metric": {
+                        "type": "string",
+                        "description": "e.g. 'streams', 'views', 'saves'"
+                    },
+                    "value": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "outreach": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Outreach activity summary for the period.",
+            "properties": {
+                "opportunities_identified": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "outreach_sent": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "responses_received": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "placements_won": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                }
+            }
+        },
+        "analyst_notes": {
+            "type": "string",
+            "description": "Observations and recommendations from the Metrics Analyst agent for this period."
+        }
+    }
+}

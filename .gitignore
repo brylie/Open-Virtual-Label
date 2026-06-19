@@ -141,3 +141,13 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Go test coverage output
+*.out
+
+# Compiled ovl CLI binary
+/cli/ovl
+
+# Ignore everything in the workspace directory except the .gitkeep file
+workspace/*
+!.gitkeep

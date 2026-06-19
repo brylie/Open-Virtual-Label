@@ -1,0 +1,173 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  # Keep the five linters that are on by default.
+  default: standard
+
+  exclusions:
+    rules:
+      # Cobra's RunE signature is (*cobra.Command, []string); the first argument
+      # is legitimately unused in most commands.
+      - linters: [unparam, revive]
+        text: "always receives|is always"
+
+      # Test files routinely repeat fixture IDs and values.
+      - path: "_test\\.go"
+        linters: [goconst]
+
+      # Heavy-struct pass-by-value is fine in test helpers.
+      - path: "_test\\.go"
+        linters: [gocritic]
+        text: "hugeParam"
+
+      # Test functions must accept *testing.T even when unused in the body.
+      - path: "_test\\.go"
+        linters: [revive]
+        text: "unused-parameter"
+
+      # Helper functions in test files that always receive the same value
+      # are intentional.
+      - path: "_test\\.go"
+        linters: [unparam]
+
+      # The prompt package reads from os.Stdin; gosec would flag the scanner.
+      - path: "internal/prompt/prompt\\.go"
+        linters: [gosec]
+
+  enable:
+    # --- Correctness & error handling ---
+    - errorlint        # catches errors that break Go 1.13 wrapping semantics
+    - nilerr           # flags `if err != nil { return nil }` — silently swallows errors
+    - nilnil           # flags functions that return (nil, nil) — caller can't distinguish
+    - forcetypeassert  # unsafe type assertions without ok check
+    - makezero         # slice declarations with non-zero initial length
+    - musttag          # require JSON/YAML tags on types passed to marshal functions
+    - recvcheck        # inconsistent receiver types on a method set
+    - exhaustive       # switch on typed enums must cover every case
+    - fatcontext       # context.WithValue in a loop — creates garbage each iteration
+
+    # --- Security ---
+    - gosec            # OWASP-aligned source-code security checks
+
+    # --- Code quality ---
+    - gocritic         # large suite of diagnostics (style, perf, diagnostic categories)
+    - revive           # configurable drop-in for golint
+    - goconst          # repeated string literals that should be named constants
+    - unconvert        # unnecessary type conversions
+    - unparam          # function parameters that always receive the same value
+    - wastedassign     # assignments whose result is never read
+    - prealloc         # slices that can be pre-allocated to avoid growth copies
+    - nestif           # deeply nested if chains; flag for refactoring
+
+    # --- Modern Go ---
+    - copyloopvar      # loop-variable aliasing bugs (pre-Go 1.22 semantics)
+    - intrange         # for-i loops that can use an integer range (Go 1.22+)
+    - modernize        # suggest modern stdlib/language features
+    - exptostd         # replace golang.org/x/exp calls with stdlib equivalents
+    - usestdlibvars    # use stdlib constants instead of string literals (e.g. http.MethodGet)
+    - perfsprint       # replace fmt.Sprintf with faster string-concat where possible
+    - mirror           # bytes/strings symmetry — use the right package for the value type
+
+    # --- Style & readability ---
+    - misspell         # catches common English spelling mistakes in identifiers and comments
+    - dupword          # duplicate words in comments ("the the")
+    - whitespace       # unnecessary blank lines at start/end of blocks
+    - nakedret         # named returns with a bare `return` — easy to misread
+    - gocognit         # cognitive complexity score per function
+
+    # --- Linting hygiene ---
+    - nolintlint       # ill-formed or over-broad //nolint directives
+    - gocheckcompilerdirectives  # invalid //go: directive comments
+
+  settings:
+    gosec:
+      excludes:
+        # G304: file path from variable. Every workspace read uses a user-controlled
+        # path by design; suppressing globally rather than per-call.
+        - G304
+        # G306: file permissions — WriteFile with 0644 is intentional for workspace files.
+        - G306
+        # G301: directory permissions — 0755 is intentional so the workspace is
+        # readable by the owning user's other tools/processes.
+        - G301
+        # G302: file permissions — OpenFile with 0644 is intentional for state files
+        # that need to be readable by other processes on the same account.
+        - G302
+
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - style
+        - performance
+
+    revive:
+      # Only configure rules we want to tune; everything else uses revive defaults.
+      rules:
+        - name: exported
+          disabled: true
+        - name: var-naming
+        - name: blank-imports
+        - name: context-as-argument
+        - name: error-return
+        - name: error-strings       # error strings must not be capitalised or end in punctuation
+        - name: error-naming        # sentinel errors must be named ErrXxx
+        - name: increment-decrement # prefer i++ over i += 1
+        - name: indent-error-flow   # don't indent the happy path
+        - name: range               # use `for range` not `for _ = range`
+        - name: receiver-naming     # consistent single-letter receiver names
+        - name: superfluous-else    # else after return/continue/break is noise
+        - name: time-naming         # duration variable naming conventions
+        - name: unexported-return   # exported funcs must not return unexported types
+        - name: unreachable-code
+        - name: unused-parameter
+        # Disabled — not required for a CLI tool without public godoc.
+        - name: package-comments
+          disabled: true
+        - name: file-header
+          disabled: true
+
+    gocognit:
+      # CLI command handlers orchestrate multiple sequential steps (resolve,
+      # read, validate, prompt, write) and are inherently more procedural than
+      # library code. Flag only functions that are genuinely hard to follow.
+      min-complexity: 60
+
+    nestif:
+      # Flag deeply nested if-chains (> 5 levels); they usually indicate
+      # a need to extract a helper.
+      min-complexity: 6
+
+    goconst:
+      min-occurrences: 3
+
+    nakedret:
+      # Disallow naked returns in functions of any length.
+      max-func-lines: 0
+
+    misspell:
+      locale: US
+
+    nolintlint:
+      # Require //nolint:lintername — broad //nolint without a name is banned.
+      require-specific: true
+      allow-unused: false
+
+    unparam:
+      # Check exported functions too, not just unexported ones.
+      check-exported: false
+
+    musttag:
+      functions:
+        - name: encoding/json.Marshal
+          tag: json
+        - name: encoding/json.MarshalIndent
+          tag: json
+        - name: encoding/json.Unmarshal
+          tag: json
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

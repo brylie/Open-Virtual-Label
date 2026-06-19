@@ -1,0 +1,73 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://openvirtuallabel.org/schemas/label/v1",
+    "title": "Label",
+    "description": "Identity, defaults, and configuration for a virtual label instance.",
+    "type": "object",
+    "required": [
+        "id",
+        "name",
+        "default_license",
+        "schema_version"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "schema_version": {
+            "type": "string",
+            "const": "1",
+            "description": "Schema version. Increment on breaking changes."
+        },
+        "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$",
+            "maxLength": 64,
+            "description": "Slug identifier for this label. Lowercase letters, numbers, hyphens. Matches workspace/label/ directory name convention."
+        },
+        "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "Display name of the label."
+        },
+        "description": {
+            "type": "string",
+            "maxLength": 1024,
+            "description": "Short description of the label's mission or focus."
+        },
+        "contact": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "format": "email"
+                },
+                "website": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "location": {
+                    "type": "string"
+                }
+            }
+        },
+        "default_license": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Default license applied to releases unless overridden. e.g. 'CC BY 4.0', 'All Rights Reserved'."
+        },
+        "default_distributor": {
+            "type": "string",
+            "description": "Default distribution platform. e.g. 'amuse', 'distrokid', 'cdbaby'."
+        },
+        "styleguide_path": {
+            "type": "string",
+            "description": "Relative path to the label's style guide within the workspace. e.g. 'label/styleguide/'."
+        },
+        "created_date": {
+            "type": "string",
+            "format": "date",
+            "description": "ISO 8601 date when this label workspace was initialized."
+        }
+    }
+}

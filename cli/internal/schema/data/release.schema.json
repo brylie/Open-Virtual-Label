@@ -1,0 +1,312 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://openvirtuallabel.org/schemas/release/v1",
+    "title": "Release",
+    "description": "A single release (album, EP, or single) from production through archival and distribution.",
+    "type": "object",
+    "required": [
+        "id",
+        "title",
+        "artist_id",
+        "release_type",
+        "status",
+        "license",
+        "schema_version"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "schema_version": {
+            "type": "string",
+            "const": "1"
+        },
+        "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$",
+            "maxLength": 64,
+            "description": "Slug. Matches workspace/artists/[artist-id]/releases/[id]/ directory."
+        },
+        "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+        },
+        "artist_id": {
+            "type": "string",
+            "description": "References an artist.json id."
+        },
+        "release_type": {
+            "type": "string",
+            "enum": [
+                "album",
+                "ep",
+                "single",
+                "compilation"
+            ],
+            "description": "Release format. Affects QC requirements and distribution metadata."
+        },
+        "status": {
+            "type": "string",
+            "enum": [
+                "in-production",
+                "mastering",
+                "qc",
+                "ready",
+                "submitted",
+                "live",
+                "archived"
+            ],
+            "description": "Current stage in the release pipeline. Advances sequentially; only the QC agent can set 'qc'; only the archive agent can set 'ready'."
+        },
+        "license": {
+            "type": "string",
+            "minLength": 1,
+            "description": "License for this release. Overrides artist and label defaults."
+        },
+        "description": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Release description text in multiple lengths.",
+            "properties": {
+                "short": {
+                    "type": "string",
+                    "maxLength": 280,
+                    "description": "One or two sentences. For social posts and streaming platform short descriptions."
+                },
+                "full": {
+                    "type": "string",
+                    "description": "Full release notes. For Bandcamp, press kit, and website."
+                }
+            }
+        },
+        "genre_tags": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "Genre tags for this release. Defaults to artist genre_tags if omitted."
+        },
+        "tracks": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "Ordered list of track IDs. Order defines the tracklist sequence."
+        },
+        "dates": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "target_release": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Intended public release date."
+                },
+                "distributor_submission_deadline": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Latest date for distributor submission to hit target release date."
+                },
+                "submitted": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Date distribution package was submitted. Set by the release submit workflow."
+                },
+                "released": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Confirmed live date across platforms."
+                }
+            }
+        },
+        "distribution": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "distributor": {
+                    "type": "string",
+                    "description": "Distribution platform for this release. e.g. 'amuse', 'distrokid'."
+                },
+                "upc": {
+                    "type": "string",
+                    "description": "Universal Product Code assigned by distributor."
+                },
+                "catalog_number": {
+                    "type": "string",
+                    "description": "Label catalog number, if used."
+                }
+            }
+        },
+        "mastering_profile_id": {
+            "type": "string",
+            "description": "References a mastering_profile.json id. Applied to all tracks unless overridden at track level."
+        },
+        "artwork": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "primary_file": {
+                    "type": "string",
+                    "description": "Path to primary artwork file relative to release directory. e.g. 'artwork/cover-3000x3000.png'."
+                },
+                "dimensions_px": {
+                    "type": "integer",
+                    "description": "Pixel dimensions of the square artwork (must be at least 3000).",
+                    "minimum": 3000
+                },
+                "format": {
+                    "type": "string",
+                    "enum": [
+                        "png",
+                        "jpg",
+                        "tiff"
+                    ],
+                    "description": "File format of the primary artwork."
+                },
+                "qc_passed": {
+                    "type": "boolean",
+                    "description": "Whether artwork has passed QC checks (dimensions, format, file integrity)."
+                }
+            }
+        },
+        "archive": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Archival status and locations.",
+            "properties": {
+                "internet_archive_id": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Internet Archive item identifier. e.g. 'brylie-christopher-spectra-2025'."
+                },
+                "internet_archive_url": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "format": "uri"
+                },
+                "object_storage_path": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Path prefix within secondary object storage bucket."
+                },
+                "masters_archived": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Lossless master WAV files uploaded to both archive locations."
+                },
+                "stems_archived": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "project_files_archived": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "DAW session/project files archived."
+                },
+                "archive_date": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "format": "date"
+                },
+                "checksums_verified": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "SHA-256 checksums verified after upload."
+                }
+            }
+        },
+        "store_links": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Platform URLs populated after release goes live.",
+            "properties": {
+                "spotify": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "format": "uri"
+                },
+                "apple_music": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "format": "uri"
+                },
+                "youtube_music": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "format": "uri"
+                },
+                "bandcamp": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "format": "uri"
+                },
+                "soundcloud": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "format": "uri"
+                },
+                "tidal": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "format": "uri"
+                },
+                "amazon_music": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "format": "uri"
+                }
+            }
+        },
+        "qc": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Release-level QC status. Track-level QC is on each track record.",
+            "properties": {
+                "passed": {
+                    "type": "boolean",
+                    "description": "True only when all tracks have qc_passed: true and all release-level checks pass."
+                },
+                "checked_date": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "format": "date"
+                },
+                "notes": {
+                    "type": "string",
+                    "description": "Any QC notes, failures, or manual overrides with rationale."
+                }
+            }
+        },
+        "created_date": {
+            "type": "string",
+            "format": "date"
+        },
+        "notes": {
+            "type": "string",
+            "description": "Free-form notes. For internal use — not published."
+        }
+    }
+}

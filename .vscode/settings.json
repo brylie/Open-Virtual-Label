@@ -1,0 +1,13 @@
+{
+  "editor.formatOnSave": true,
+  "[markdown]": {
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.markdownlint": "explicit"
+    }
+  },
+  "markdownlint.config": {
+    "extends": ".markdownlint.yaml"
+  }
+}

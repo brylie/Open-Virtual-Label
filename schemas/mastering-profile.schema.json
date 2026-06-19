@@ -1,0 +1,153 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://openvirtuallabel.org/schemas/mastering-profile/v1",
+    "title": "MasteringProfile",
+    "description": "A reusable set of mastering targets and guidance for a genre or delivery context. Used by the Mastering Companion agent. Profiles improve over time as session notes accumulate.",
+    "type": "object",
+    "required": [
+        "id",
+        "name",
+        "targets",
+        "schema_version"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "schema_version": {
+            "type": "string",
+            "const": "1"
+        },
+        "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$",
+            "maxLength": 64,
+            "description": "Slug. e.g. 'ambient-streaming-v1', 'podcast-bed-v1', 'electronic-club-v1'."
+        },
+        "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "Human-readable name. e.g. 'Ambient / Streaming (Dynamic Preservation)'."
+        },
+        "description": {
+            "type": "string",
+            "description": "When to use this profile and why its targets are set as they are."
+        },
+        "targets": {
+            "type": "object",
+            "required": [
+                "integrated_lufs",
+                "true_peak_dbtp"
+            ],
+            "additionalProperties": false,
+            "description": "Measurable mastering targets. All measurements in industry-standard units.",
+            "properties": {
+                "integrated_lufs": {
+                    "type": "object",
+                    "required": [
+                        "min",
+                        "max"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Acceptable range for integrated loudness.",
+                    "properties": {
+                        "min": {
+                            "type": "number"
+                        },
+                        "max": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "true_peak_dbtp": {
+                    "type": "number",
+                    "description": "Maximum true peak ceiling in dBTP. Typically -1.0 for streaming."
+                },
+                "lra_min": {
+                    "type": [
+                        "number",
+                        "null"
+                    ],
+                    "description": "Minimum loudness range in LU. Guards against over-compression. Null means no minimum enforced."
+                },
+                "lra_max": {
+                    "type": [
+                        "number",
+                        "null"
+                    ],
+                    "description": "Maximum loudness range in LU. Null means no maximum enforced."
+                },
+                "sample_rate_hz": {
+                    "type": "integer",
+                    "enum": [
+                        44100,
+                        48000,
+                        88200,
+                        96000
+                    ],
+                    "description": "Required sample rate for the mastered export.",
+                    "default": 44100
+                },
+                "bit_depth": {
+                    "type": "integer",
+                    "enum": [
+                        16,
+                        24,
+                        32
+                    ],
+                    "description": "Required bit depth for the mastered export.",
+                    "default": 24
+                }
+            }
+        },
+        "platform_notes": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "string"
+            },
+            "description": "Per-platform notes on how the platform handles the mastered file. Keys are platform names (e.g. 'spotify', 'youtube', 'apple_music'). Values are brief plain-text guidance."
+        },
+        "checklist": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1,
+            "description": "Ordered list of mastering steps the Mastering Companion walks through. Each item is a single concrete action."
+        },
+        "session_notes": {
+            "type": "array",
+            "description": "Notes appended by the Mastering Companion after each session using this profile. Accumulates real-world learnings over time.",
+            "items": {
+                "type": "object",
+                "required": [
+                    "date",
+                    "track_id",
+                    "note"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "track_id": {
+                        "type": "string",
+                        "description": "The track this session note relates to."
+                    },
+                    "note": {
+                        "type": "string",
+                        "description": "What was observed or learned. e.g. 'Low-mid buildup around 250Hz on this piano recording needed 2dB cut before limiting'."
+                    }
+                }
+            }
+        },
+        "created_date": {
+            "type": "string",
+            "format": "date"
+        },
+        "last_updated": {
+            "type": "string",
+            "format": "date"
+        }
+    }
+}
