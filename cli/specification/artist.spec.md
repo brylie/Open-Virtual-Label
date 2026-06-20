@@ -153,6 +153,7 @@ ovl artist set-platform <artist-id> --platform <platform> --value <value>
 | `facebook` | `facebook_url` | Full URL |
 | `tiktok` | `tiktok_handle` | Handle without `@` |
 | `subvert-fm` | `subvert_fm_url` | Full URL (e.g. `https://www.subvert.fm/artist`) |
+| `fma` | `fma_url` | Full URL (e.g. `https://freemusicarchive.org/music/artist`) |
 
 **Behaviour:**
 

@@ -172,6 +172,11 @@
                     "type": "string",
                     "format": "uri",
                     "description": "Artist profile on Subvert.fm co-op music platform"
+                },
+                "fma_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Artist page on Free Music Archive"
                 }
             }
         },

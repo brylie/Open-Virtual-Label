@@ -22,6 +22,7 @@ const (
 	platformFacebookArtist   = "facebook"
 	platformTikTok           = "tiktok"
 	platformSubvertFMArtist  = "subvert-fm"
+	platformFMAArtist        = "fma"
 )
 
 var validArtistPlatforms = map[string]bool{
@@ -35,6 +36,7 @@ var validArtistPlatforms = map[string]bool{
 	platformFacebookArtist:   true,
 	platformTikTok:           true,
 	platformSubvertFMArtist:  true,
+	platformFMAArtist:        true,
 }
 
 var (
@@ -303,6 +305,8 @@ func setArtistPlatformField(p *models.ArtistPlatforms, platform, value string) {
 		p.TikTokHandle = value
 	case platformSubvertFMArtist:
 		p.SubvertFMURL = value
+	case platformFMAArtist:
+		p.FMAURL = value
 	}
 }
 

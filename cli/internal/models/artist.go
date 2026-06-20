@@ -6,6 +6,7 @@ type Artist struct {
 	DisplayName    string           `json:"display_name"`
 	LegalName      string           `json:"legal_name,omitempty"`
 	AlsoKnownAs    []string         `json:"also_known_as,omitempty"`
+	Members        []string         `json:"members,omitempty"`
 	Bio            *ArtistBio       `json:"bio,omitempty"`
 	GenreTags      []string         `json:"genre_tags,omitempty"`
 	Contact        *ArtistContact   `json:"contact,omitempty"`
@@ -50,4 +51,5 @@ type ArtistPlatforms struct {
 	FacebookURL          string `json:"facebook_url,omitempty"`
 	TikTokHandle         string `json:"tiktok_handle,omitempty"`
 	SubvertFMURL         string `json:"subvert_fm_url,omitempty"`
+	FMAURL               string `json:"fma_url,omitempty"`
 }
