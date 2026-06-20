@@ -15,7 +15,7 @@ routing decision requires this reference.
 | "Archive release", backup, Internet Archive upload     | `archive`                       |
 | "Research outreach", find opportunities, review drafts | `outreach-crm`                  |
 | "What are my numbers", metrics, analytics, trends      | `metrics-analyst`               |
-| Revenue, expenses, income goals, financial summary     | `finance-manager`               |
+| Revenue, expenses, income goals, financial summary     | `ovl-finance-manager`               |
 | Content calendar, release campaign, posting schedule   | `content-strategist`            |
 | Social copy, captions, announcements                   | `social-media`                  |
 | Status, what to work on, planning                      | Orchestrator (direct)           |
@@ -40,7 +40,7 @@ waiting, or follow up on something already sent?"
 
 **"Can you look at my numbers?"**
 → This usually means metrics-analyst, but if the artist says "revenue" or
-"how much have I earned", route to finance-manager instead.
+"how much have I earned", route to `ovl-finance-manager` instead.
 
 ---
 
@@ -61,14 +61,14 @@ Common sequences:
 
 ### Monthly review
 1. `metrics-analyst` — compile analytics snapshot
-2. `finance-manager` — revenue and expense summary
+2. `ovl-finance-manager` — revenue and expense summary
 3. Orchestrator — strategic check-in, update goals and open loops
 
 ### Commission intake
 
 1. `outreach-crm` — record inquiry, create opportunity
 2. Orchestrator — confirm scope and timeline with artist
-3. `finance-manager` — agree rate and create expense/income projection
+3. `ovl-finance-manager` — agree rate and create expense/income projection
 4. `outreach-crm` — draft agreement for artist review [GATED]
 
 ---
