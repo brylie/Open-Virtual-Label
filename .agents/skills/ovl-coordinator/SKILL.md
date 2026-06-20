@@ -1,5 +1,5 @@
 ---
-name: coordinator
+name: ovl-coordinator
 description: >
   OVL session entry point. Reads workspace/state/label-state.md to restore
   label context, then routes requests to the right specialist agent, tracks

@@ -59,10 +59,10 @@ ovl status [--artist <artist-id>]
 **Output example:**
 
 ```text
-Last session: 2025-06-14 — mastered tracks 1–3 of Spectra
+Last session: 2025-06-14 — mastered tracks 1–3 of Debut Album
 
 Active releases (1):
-  Spectra [brylie-christopher] — mastering (3 of 8 tracks)
+  Debut Album [aria-nova] — mastering (3 of 8 tracks)
 
 Pending approvals (1):
   outreach-crm: draft to Calm Waters Podcast
@@ -100,8 +100,8 @@ ovl validate [<path>] [--all]
 
 ```text
 ✓ workspace/label/profile.json
-✓ workspace/artists/brylie-christopher/artist.json
-✗ workspace/artists/brylie-christopher/releases/spectra/tracks/chromatic-drift.json
+✓ workspace/artists/aria-nova/artist.json
+✗ workspace/artists/aria-nova/releases/debut-album/tracks/track-one.json
     mastering.true_peak_dbtp: must be number, got null
     qc.passed: required field missing
 2 errors found.

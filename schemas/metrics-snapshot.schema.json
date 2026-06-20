@@ -20,7 +20,7 @@
             "type": "string",
             "pattern": "^[a-z0-9-]+$",
             "maxLength": 64,
-            "description": "Slug. Convention: '[artist-id]-[YYYY-MM]'. e.g. 'brylie-christopher-2025-06'."
+            "description": "Slug. Convention: '[artist-id]-[YYYY-MM]'. e.g. 'aria-nova-2025-06'."
         },
         "artist_id": {
             "type": "string"

@@ -1,5 +1,5 @@
 ---
-name: template
+name: ovl-template
 description: >
   Template for OVL agent skill files. Use this as the starting point when
   creating a new specialist agent for the Open Virtual Label system. Not

@@ -23,7 +23,7 @@ ovl artist create
 
 - Prompts for display name, legal name, default license, PRO, IPI number, distributor,
   and platform links
-- Generates a slug from the display name (e.g. `brylie-christopher`)
+- Generates a slug from the display name (e.g. `aria-nova`)
 - Creates `workspace/artists/[slug]/artist.json`
 - Validates against `schemas/artist.schema.json` before writing
 

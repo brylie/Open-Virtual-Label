@@ -178,7 +178,7 @@
                         "string",
                         "null"
                     ],
-                    "description": "Internet Archive item identifier. e.g. 'brylie-christopher-spectra-2025'."
+                    "description": "Internet Archive item identifier. e.g. 'aria-nova-debut-album-2025'."
                 },
                 "internet_archive_url": {
                     "type": [

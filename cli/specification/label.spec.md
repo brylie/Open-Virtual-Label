@@ -30,13 +30,12 @@ ovl label show [--json]
 **Output example:**
 
 ```text
-Label:        OurMusi.cc
-ID:           ourmusicc
+Label:        My Label
+ID:           my-label
 Description:  Independent Creative Commons label for ambient, piano, and experimental music.
 License:      CC BY 4.0
 Distributor:  amuse
-Contact:      brylie.oxley@gmail.com
-Website:      https://ourmusi.cc
+Contact:      hello@my-label.com
 Created:      2026-06-19
 ```
 

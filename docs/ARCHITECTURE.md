@@ -14,7 +14,7 @@ This document is the component inventory. Every subsystem in OVL is listed here 
                        │
 ┌──────────────────────▼──────────────────────────────────┐
 │                  ovl CLI / TUI                          │
-│         (primary interaction surface · Node.js)         │
+│            (primary interaction surface · Go)           │
 └──────┬───────────────┬────────────────┬─────────────────┘
        │               │                │
        ▼               ▼                ▼
@@ -43,7 +43,7 @@ Data flows in one direction: the workspace holds canonical records; agents read 
 
 **Responsibility:** Primary interaction surface. Wraps common operations into commands that validate input, update workspace records, and invoke agents when a process needs conversational guidance.
 
-**Stack:** Node.js. CLI framework TBD (candidates: [ink](https://github.com/vadimdemedes/ink) for TUI components, [commander](https://github.com/tj/commander.js) or [citty](https://github.com/unjs/citty) for command parsing). Chosen to align with the Astro.js ecosystem and keep the toolchain consistent for contributors familiar with web development.
+**Stack:** Go. CLI framework: [Cobra](https://github.com/spf13/cobra). Commands live in `cli/cmd/`, internal packages in `cli/internal/`. Go was chosen for fast startup time, a single compiled binary with no runtime dependency, and strong cross-platform support.
 
 **What it reads:** Workspace JSON records, agent skill files (to know which agent to invoke for a given command), mastering profiles.
 
@@ -304,8 +304,8 @@ This trace shows how components interact for a typical release cycle. It is the 
 
 | Decision          | Choice                         | Rationale                                                     |
 | ----------------- | ------------------------------ | ------------------------------------------------------------- |
-| CLI language      | Node.js                        | Aligns with Astro.js; single toolchain for contributors       |
-| CLI framework     | TBD (ink / commander / citty)  | Evaluate for TUI quality and ESM compatibility                |
+| CLI language      | Go                             | Fast startup, single binary, no runtime dependency            |
+| CLI framework     | Cobra                          | Mature Go CLI framework; subcommand structure, flag parsing   |
 | Schema format     | JSON Schema Draft 7            | Wide tooling support, language-agnostic                       |
 | Web framework     | Astro.js                       | Content-first, static output, Node ecosystem                  |
 | Agent format      | Markdown skill files           | Human-readable, LLM-readable, no runtime dependency           |
@@ -326,11 +326,118 @@ OVL is designed to be extended without modifying core components.
 
 **Adding a workflow:** New markdown file in `workflows/`, entry in `workflows/README.md`. No code changes.
 
-**Adding a CLI command:** New command file in `cli/commands/`, registered in `cli/index.js`. Should validate against schemas and follow the approval gate pattern for any external action.
+**Adding a CLI command:** New command file in `cli/cmd/`, added to `rootCmd` via `AddCommand`. Should validate against schemas and follow the approval gate pattern for any external action.
 
 **Adding an MCP:** New directory in `mcp/`, registered in `mcp/registry.json`. Must implement the approval gate interface for any write or send action.
 
 **Forking for a new label:** Copy or clone the repo, run `ovl init` to create a `workspace/`, customize the scaffold. The repo itself never needs to be modified for label-specific content.
+
+---
+
+## Website Sync
+
+OVL workspaces can be connected to one or more Astro websites via `ovl site sync`.
+The workspace is the **canonical source of truth**. Websites are secondary consumers —
+their content collections are populated on demand, not maintained independently.
+
+### How it works
+
+Each website target is registered on the label profile with a slug ID, a path to the
+site root, and an optional artist filter:
+
+```sh
+# Label site — all artists and releases, conventional content dirs
+ovl site add label-site sites/my-label.com --description "Label site"
+
+# Artist site — one artist's records, separate dirs to avoid colliding with
+# the site's own hand-authored MDX releases collection
+ovl site add aria-nova-site sites/aria-nova \
+  --artist aria-nova \
+  --artists-dir src/content/catalog/artists \
+  --releases-dir src/content/catalog/releases \
+  --description "Aria Nova artist site"
+```
+
+Running `ovl site sync` copies the relevant workspace JSON records into each site's
+Astro content collection directories (`src/content/artists/` and `src/content/releases/`).
+The site then reads those files through its content loader on build.
+
+```
+OVL workspace (canonical)
+  workspace/artists/aria-nova/artist.json
+  workspace/artists/aria-nova/releases/debut-album/release.json
+
+  ↓  ovl site sync
+
+sites/my-label.com/src/content/artists/aria-nova.json          (label site)
+sites/my-label.com/src/content/releases/aria-nova--debut-album.json
+
+sites/aria-nova/src/content/catalog/artists/aria-nova.json  (artist site)
+sites/aria-nova/src/content/catalog/releases/aria-nova--debut-album.json
+```
+
+### Artist sites vs label sites
+
+The same `ovl site sync` command serves both site types. The distinction is set at
+registration time with `--artist`:
+
+| Site type | `--artist` flag | What syncs |
+| --- | --- | --- |
+| Label site | (omitted) | All artists and all releases |
+| Artist site | `--artist <id>` | One artist's records only |
+
+The Astro `content.config.ts` schema is identical in both cases — only the data
+present in the content directory differs. This means a site can switch from artist
+to label scope without any config file changes; just re-register it in OVL.
+
+### Multiple sites, one command
+
+Sync all registered sites in one step:
+
+```sh
+ovl site sync
+```
+
+Or target a single site:
+
+```sh
+ovl site sync --site aria-nova-site
+```
+
+### Typical workflow
+
+```sh
+# After updating any workspace record:
+ovl release add-link debut-album --platform spotify --url https://...
+ovl site sync
+# Then rebuild and deploy each site as normal.
+```
+
+### Reference content.config.ts files
+
+Two reference Astro content configs are maintained alongside the workspace:
+
+| Path | Purpose |
+| --- | --- |
+| `workspace/sites/<label-site>/src/content.config.ts` | Label site — `artists` and `releases` collections reading from the default dirs |
+| `workspace/sites/<artist-site>/src/content.config.ts` | Artist site — adds `catalogArtists` and `catalogReleases` collections pointing at `src/content/catalog/`, keeping the site's existing MDX `releases` collection intact |
+
+Both files carry a comment naming the OVL schemas they mirror. When an OVL schema
+gains a new field or enum value, update the matching Zod schema in each site's
+config. The comment block at the top of each config is the reminder:
+
+```ts
+// Mirrors workspace/artists/*/releases/*/release.json
+// Status values must match the OVL release schema exactly — OVL is canonical.
+```
+
+**Schema generation is intentionally not provided.** JSON Schema → Zod mapping is
+non-trivial (format validators, nullable handling, Astro loader config), and sites
+typically expose only a subset of OVL fields. The reference configs in this repo
+are the template; copy one and trim to taste. See `cli/specification/site.spec.md`
+for a full explanation.
+
+**See:** `cli/specification/site.spec.md` for the full command reference.
 
 ---
 

@@ -64,6 +64,7 @@ var labelSetContactCmd = &cobra.Command{
 	RunE:  runLabelSetContact,
 }
 
+
 func init() {
 	labelSetContactCmd.Flags().StringVar(&labelSetContactEmail, "email", "", "public contact email for the label")
 	labelSetContactCmd.Flags().StringVar(&labelSetContactWebsite, "website", "", "label website URL")
@@ -133,6 +134,20 @@ func runLabelShow(_ *cobra.Command, _ []string) error {
 		}
 		if l.Contact.Location != "" {
 			fmt.Printf("Location:     %s\n", l.Contact.Location)
+		}
+	}
+	if len(l.Sites) > 0 {
+		fmt.Printf("Sites:\n")
+		for _, s := range l.Sites {
+			scope := "all artists"
+			if s.ArtistID != "" {
+				scope = s.ArtistID
+			}
+			desc := ""
+			if s.Description != "" {
+				desc = "  " + s.Description
+			}
+			fmt.Printf("  %-20s %s  [%s]%s\n", s.ID, s.Path, scope, desc)
 		}
 	}
 	if l.CreatedDate != "" {
@@ -244,3 +259,4 @@ func runLabelSetContact(cmd *cobra.Command, _ []string) error {
 	output.Success("Updated label contact details")
 	return nil
 }
+

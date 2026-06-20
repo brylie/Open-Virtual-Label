@@ -64,6 +64,44 @@
             "type": "string",
             "description": "Relative path to the label's style guide within the workspace. e.g. 'label/styleguide/'."
         },
+        "sites": {
+            "type": "array",
+            "description": "Website targets for 'ovl site sync'. Each entry points to an Astro site whose content collections mirror the OVL workspace. The workspace is the canonical source; sites are secondary consumers.",
+            "items": {
+                "type": "object",
+                "required": ["id", "path"],
+                "additionalProperties": false,
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "pattern": "^[a-z0-9-]+$",
+                        "maxLength": 64,
+                        "description": "Slug identifier for this site. Used with 'ovl site sync --site <id>'."
+                    },
+                    "path": {
+                        "type": "string",
+                        "description": "Path to the site root. Relative paths are resolved from the workspace directory. e.g. 'sites/my-label.com'."
+                    },
+                    "artist_id": {
+                        "type": "string",
+                        "description": "Restrict sync to a single artist's records. When set, only that artist's artist.json and releases are copied. Omit for a label-wide site that includes all artists."
+                    },
+                    "artists_dir": {
+                        "type": "string",
+                        "description": "Destination directory for synced artist JSON files, relative to the site root. Defaults to 'src/content/artists'. Override when the site already uses that path for another collection."
+                    },
+                    "releases_dir": {
+                        "type": "string",
+                        "description": "Destination directory for synced release JSON files, relative to the site root. Defaults to 'src/content/releases'. Override when the site already uses that path for another collection."
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 256,
+                        "description": "Human-readable label for this site. e.g. 'Label site', 'Brylie Christopher artist site'."
+                    }
+                }
+            }
+        },
         "created_date": {
             "type": "string",
             "format": "date",

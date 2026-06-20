@@ -231,7 +231,7 @@ If adopting OVL from an existing installation rather than installing fresh:
 A `workspace/` directory already exists. Run `ovl init --force` to overwrite, or inspect the existing workspace first.
 
 **Artist ID already taken:**
-Artist IDs must be unique within the workspace. If `brylie-christopher` already exists, use a more specific slug such as `brylie-christopher-main`.
+Artist IDs must be unique within the workspace. If `aria-nova` already exists, use a more specific slug such as `aria-nova-2`.
 
 **Schema validation fails on first validate:**
 Open the flagged file and compare against the corresponding schema in `schemas/`. The error message identifies the field and the constraint that failed.
