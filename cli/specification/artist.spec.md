@@ -13,17 +13,25 @@ All writes validate against `schemas/artist.schema.json` before saving.
 
 ### `ovl artist create`
 
-Create a new artist profile interactively.
+Create a new artist profile.
 
 ```text
-ovl artist create
+ovl artist create [--display-name <name>] [--id <id>] [--license <license>]
 ```
+
+**Flags:**
+
+| Flag | Description |
+|---|---|
+| `--display-name <name>` | Artist display name (skips interactive prompt) |
+| `--id <id>` | Override the auto-generated slug (e.g. `escher-adams`) |
+| `--license <license>` | Default license (e.g. `CC BY 4.0`) |
 
 **Behaviour:**
 
-- Prompts for display name, legal name, default license, PRO, IPI number, distributor,
-  and platform links
-- Generates a slug from the display name (e.g. `aria-nova`)
+- If `--display-name` is omitted, prompts interactively for display name, legal name,
+  default license, PRO, IPI number, distributor, and platform links
+- Generates a slug from the display name when `--id` is not provided (e.g. `aria-nova`)
 - Creates `workspace/artists/[slug]/artist.json`
 - Validates against `schemas/artist.schema.json` before writing
 
@@ -222,3 +230,23 @@ ovl artist set-location <artist-id> "<location>"
 
 **Behaviour:** Updates `artist.location`. Used for press kits and venue outreach.
 Recommended format: `City, Country` (e.g. `Helsinki, Finland`).
+
+---
+
+### `ovl artist add-member <artist-id> --member <member-artist-id>`
+
+Add a member to a collaborative project or band.
+
+```text
+ovl artist add-member <artist-id> --member <member-artist-id>
+```
+
+**Behaviour:**
+
+- Appends `<member-artist-id>` to `artist.members` if not already present
+- The member must be an existing artist ID in the workspace
+
+**Errors:**
+
+- `ARTIST_NOT_FOUND` — either the group or the member ID does not exist
+- `ALREADY_A_MEMBER` — the member ID is already listed

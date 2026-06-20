@@ -40,6 +40,13 @@
             },
             "description": "Additional performing names or project aliases (e.g. a solo ambient project and an electronic alias)."
         },
+        "members": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "Artist IDs of individual members, for collaborative projects and bands."
+        },
         "bio": {
             "type": "object",
             "additionalProperties": false,
